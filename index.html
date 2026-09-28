@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="so"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Birthday 🤎</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#000;overflow:hidden;font-family:system-ui,sans-serif;color:#fff}
+#st{position:fixed;inset:0}
+#title{position:fixed;top:3%;left:50%;transform:translateX(-50%);z-index:10;background:#fff;color:#a0644a;padding:12px 32px;border-radius:40px;font:600 clamp(1.1rem,4.5vw,1.6rem) 'Dancing Script',cursive;white-space:nowrap;opacity:0;transition:opacity 1.5s;box-shadow:0 0 25px #ff8fc466}
+#title.on{opacity:1}
+#pause{position:fixed;top:14px;right:14px;z-index:20;width:44px;height:44px;border-radius:50%;border:0;background:#000;color:#fff;font-size:1.1rem;cursor:pointer;box-shadow:0 0 18px 4px #ff5e9c88}
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;perspective:1600px;z-index:5}
+.book{--pw:min(40vw,200px);position:relative;width:var(--pw);height:calc(var(--pw)*1.5);transform-style:preserve-3d;transition:transform 1.4s ease,opacity 1s;cursor:pointer}
+.book.open{transform:translateX(50%);cursor:default}
+.book.end{transform:translateX(50%)}
+.book.gone{opacity:0;pointer-events:none}
+.leaf{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;transition:transform 1.4s ease}
+.leaf.f{transform:rotateY(-180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:#fff;padding:7px;border-radius:0 8px 8px 0;box-shadow:0 0 30px #ff5e9c33;overflow:hidden}
+.face.back{transform:rotateY(180deg);border-radius:8px 0 0 8px}
+.face img,.face .ph{width:100%;height:100%;object-fit:cover;display:block;border-radius:4px;background:linear-gradient(135deg,#fbc2eb,#a6c1ee);text-align:center;font-size:3rem;padding-top:40%}
+.cover{display:flex;align-items:center;justify-content:center;font-size:clamp(3rem,14vw,5.5rem);background:linear-gradient(90deg,#eee,#fff 12%)}
+.bk{height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:#fff0f5;border-radius:4px}
+#hint{display:none;position:fixed;bottom:12%;left:0;right:0;text-align:center;z-index:6;animation:blink 1.6s infinite;transition:opacity .6s}
+@keyframes blink{50%{opacity:.35}}
+#heart{position:fixed;inset:0;z-index:4;pointer-events:none}
+#heart.beat{animation:beat 1.3s ease-in-out infinite}
+@keyframes beat{50%{transform:scale(1.04)}}
+.card{position:absolute;background:#fff;border:3px solid #fff;border-radius:12px;overflow:hidden;box-shadow:0 0 12px #ff8fc4,0 0 28px #ff5e9c;opacity:0;transform:scale(0);transition:transform 1.5s cubic-bezier(.2,1.2,.3,1),opacity .8s}
+.card img,.card .ph{width:100%;height:100%;object-fit:cover;display:block;background:linear-gradient(135deg,#fbc2eb,#a6c1ee);text-align:center;font-size:1.6rem}
+.fh{position:fixed;bottom:-30px;z-index:3;animation:rise linear forwards;pointer-events:none}
+@keyframes rise{to{transform:translateY(-110vh);opacity:0}}
+#replay{position:fixed;bottom:5%;left:50%;transform:translateX(-50%);z-index:20;padding:10px 22px;border:0;border-radius:30px;background:#fff;color:#c2185b;font-weight:700;cursor:pointer;display:none}
+#intro{position:fixed;inset:0;z-index:40;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:opacity 1.6s}
+#intro.out{opacity:0;pointer-events:none}
+#startBtn{position:relative;z-index:2;font-size:6rem;cursor:pointer;animation:blink 1.6s infinite}
+#startBtn p{font-size:1rem;margin-top:10px}
+#num{position:relative;z-index:2;font-size:9rem;font-weight:800;color:#ffb3d1;text-shadow:0 0 30px #ff5e9c}
+#num.z{animation:zoom 1s}
+@keyframes zoom{from{transform:scale(1.7);opacity:0}to{transform:scale(1);opacity:1}}
+#rc{position:absolute;inset:0}
+#lines{position:relative;z-index:2}
+#lines div{font-size:clamp(2.2rem,10vw,4.5rem);font-weight:800;opacity:0;transform:translateY(20px);transition:all 1s;text-shadow:0 0 20px #ff5e9c,0 0 40px #ff8fc4}
+#lines div.show{opacity:1;transform:none}
+.book.hid{opacity:0;pointer-events:none}
+</style></head>
+<body>
+<canvas id="st"></canvas>
+<div id="title"></div>
+<button id="pause">⏸</button>
+<div class="stage">
+  <div class="book hid" id="book">
+    <div class="leaf" style="z-index:3"><div class="face cover">🫶🏻</div><div class="face back"></div></div>
+    <div class="leaf" style="z-index:2"><div class="face"></div><div class="face back"></div></div>
+    <div class="leaf" style="z-index:1"><div class="face"></div><div class="face back"></div></div>
+  </div>
+</div>
+<div id="heart"></div>
+<div id="hint">👆 Riix buugga si aad u furto</div>
+<button id="replay" onclick="location.reload()">↺ Dib u daawo</button>
+
+<div id="intro"><div id="startBtn">🎁<p>Riix si aad u bilowdo</p></div><div id="num"></div><canvas id="rc"></canvas><div id="lines"></div></div>
+
+<script>
+// ===== BEDDEL KUWAN =====
+const TITLE='Happy Birthday HAYAT ELMI 🤎';
+const INTRO='HAPPY|BIRTHDAY|HAYAT ELMI 💖';   // ku kala saar |
+const P=['photos/1.jpeg','photos/2.jpeg','photos/3.jpeg','photos/4.jpeg','photos/5.jpeg','photos/6.jpeg'];
+// (1-4 waxay ka muuqdaan buugga; dhammaan waxay ka muuqdaan wadnaha)
+// ========================
+const $=id=>document.getElementById(id);
+$('title').textContent=TITLE;
+
+function img(src){const im=new Image();im.src=src;im.onerror=()=>{const d=document.createElement('div');d.className='ph';d.textContent='📷';im.replaceWith(d)};return im;}
+const L=[...document.querySelectorAll('.leaf')];
+function fillBook(){const q=k=>P[k%P.length];
+  L[0].children[1].replaceChildren(img(q(0)));
+  L[1].children[0].replaceChildren(img(q(1)));L[1].children[1].replaceChildren(img(q(2)));
+  L[2].children[0].replaceChildren(img(q(3)));L[2].children[1].innerHTML='<div class="bk">❤️</div>';}
+fillBook();
+const flip=n=>{L[n].classList.add('f');setTimeout(()=>L[n].style.zIndex=10+n,600)};
+
+// Stars
+const cv=$('st'),x=cv.getContext('2d');let S=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight;S=Array.from({length:160},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.8+.4,p:Math.random()*6}))}
+rs();addEventListener('resize',rs);
+(function star(t){x.clearRect(0,0,cv.width,cv.height);
+  S.forEach(s=>{x.globalAlpha=.35+.65*Math.abs(Math.sin(t/900+s.p));x.fillStyle='#fff';x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();s.y+=.05;if(s.y>cv.height)s.y=0});
+  requestAnimationFrame(star)})(0);
+
+// Music
+const N={G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99};
+const tune=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2]];
+let ac,timer,audio,on=true;
+function synth(){ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();const b=.42;let t=ac.currentTime+.05;
+  tune.forEach(([n,d])=>{const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=N[n];
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.3,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+d*b*.95);
+    o.connect(g).connect(ac.destination);o.start(t);o.stop(t+d*b);t+=d*b});
+  timer=setTimeout(synth,(t-ac.currentTime+1.5)*1000)}
+function music(){audio=new Audio('music/birthday.mpeg');audio.loop=true;audio.onerror=()=>{audio=null;synth()};audio.play().catch(()=>{})}
+$('pause').onclick=()=>{on=!on;$('pause').textContent=on?'⏸':'▶';
+  if(audio){on?audio.play():audio.pause()}else if(ac){on?ac.resume():ac.suspend()}};
+
+// Intro: 3-2-1 -> text rain + HAPPY BIRTHDAY -> book
+$('startBtn').onclick=()=>{music();$('startBtn').style.display='none';let n=3;const N_=$('num');
+  const show=()=>{N_.textContent=n;N_.classList.remove('z');void N_.offsetWidth;N_.classList.add('z')};show();
+  const iv=setInterval(()=>{n--;if(n>0)show();else{clearInterval(iv);N_.textContent='';rain()}},1000)};
+function rain(){const c=$('rc'),g=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const ch=(INTRO.replace(/\|/g,'')+'♥❤').split(''),fs=22,y=Array(Math.ceil(c.width/fs)).fill(0).map(()=>Math.random()*-50);let raf;
+  (function d(){g.fillStyle='rgba(0,0,0,.14)';g.fillRect(0,0,c.width,c.height);g.font=fs+'px monospace';
+    y.forEach((v,i)=>{g.fillStyle=Math.random()>.5?'#ff5e9c':'#ffb3d1';g.fillText(ch[Math.random()*ch.length|0],i*fs,v*fs);y[i]=v*fs>c.height&&Math.random()>.97?0:v+1});
+    raf=requestAnimationFrame(d)})();
+  const parts=INTRO.split('|'),L=$('lines');
+  parts.forEach((t,i)=>{const e=document.createElement('div');e.textContent=t.trim();L.appendChild(e);setTimeout(()=>e.classList.add('show'),500+i*1300)});
+  setTimeout(()=>{$('intro').classList.add('out');$('book').classList.remove('hid');$('hint').style.display='block';
+    setTimeout(()=>{cancelAnimationFrame(raf);$('intro').style.display='none'},1700)},500+parts.length*1300+2500);}
+
+// Sequence: open -> spread 1 -> page turn -> spread 2 -> close -> heart
+let started=false;
+$('book').onclick=()=>{if(started)return;started=true;$('hint').style.display='none';
+  const B=$('book');B.classList.add('open');flip(0);$('title').classList.add('on');
+  setTimeout(()=>flip(1),4500);
+  setTimeout(()=>{flip(2);B.classList.replace('open','end')},8500);
+  setTimeout(()=>{B.classList.add('gone');heart()},11000);};
+
+let HC=[];
+function layout(){const H=$('heart'),vw=innerWidth,vh=innerHeight,cx=vw/2,cy=vh*.5,sc=Math.min(vw*.9,vh*.72)/36,size=Math.max(48,Math.min(vw,vh)/9);
+  H.style.transformOrigin=cx+'px '+cy+'px';
+  HC.forEach(o=>{const d=o.d;d.style.width=d.style.height=size+'px';d.style.left=(cx-size/2)+'px';d.style.top=(cy-size/2)+'px';
+    if(o.on)d.style.transform=`translate(${o.px*sc}px,${o.py*sc}px) rotate(${o.r}deg) scale(1)`;});}
+addEventListener('resize',layout);
+function heart(){const H=$('heart'),n=26;
+  for(let i=0;i<n;i++){const t=i/n*Math.PI*2,d=document.createElement('div');d.className='card';d.appendChild(img(P[i%P.length]));H.appendChild(d);
+    const o={d,on:false,r:(Math.random()-.5)*24,px:16*Math.pow(Math.sin(t),3),py:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))+2};HC.push(o);
+    setTimeout(()=>{o.on=true;d.style.opacity=1;layout()},100+i*120);}
+  layout();
+  setTimeout(()=>{H.classList.add('beat');$('replay').style.display='block'},n*120+1800);}
+
+// Floating hearts
+setInterval(()=>{if(!started)return;const h=document.createElement('div');h.className='fh';h.textContent=['💗','❤️','💕','💖'][Math.random()*4|0];
+  h.style.left=Math.random()*95+'%';h.style.fontSize=(14+Math.random()*16)+'px';h.style.animationDuration=(6+Math.random()*5)+'s';
+  document.body.appendChild(h);setTimeout(()=>h.remove(),11000)},600);
+</script>
+</body></html>
